@@ -1,0 +1,9 @@
+{
+  "version": "0.0.1",
+  "main": "main.js",
+  "name": "test-extension",
+  "publisher": "test-publisher",
+  "scripts":  {
+    "cdebase:prepublish": "echo 'Prepublish!'"
+  }
+}

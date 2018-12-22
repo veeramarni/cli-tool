@@ -1,0 +1,23 @@
+language: go
+sudo: false
+go:
+- 1.10.x
+go_import_path: github.com/sourcegraph/src-cli
+install:
+- go get -d -t ./...
+- go test -i ./...
+- go get -u github.com/mitchellh/gox
+- mkdir release
+- cd release && gox -arch 'amd64' -os 'linux windows darwin' ../cmd/...
+script:
+- cd $TRAVIS_BUILD_DIR
+- go test -race -v ./...
+deploy:
+  provider: releases
+  api_key: 531f5e94eed5f32bf12ad2022d2d1caaaf0ee057
+  file_glob: true
+  file: release/*
+  overwrite: true
+  skip_cleanup: true
+  on:
+    tags: true
