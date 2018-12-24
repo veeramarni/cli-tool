@@ -16,6 +16,9 @@ deploy:
   provider: releases
   api_key:
     secure: Q6GaIC2Zw2ySLQBVCCKd/a3njsSNQ2oy0Jv+keuGeKI/YUhknmKILjhZiLFpKKXhBpqdMmLpaf4B5et2C7EZrvz3RG0cuBwNC1w/dFXDc/d060QrNTGdpG68uAYza7FltKcK/xEFNPqxMu+3lpVBzNOb+aDfOuajihTHRl/P3p4tgdfqEbwQOO5xqSQJo6FXebQLM8G7m20b+3rQ2UTkLW7xVBaOBe8pD0lHpG5st1uVbE7rKF/hiNDraaDQwQRX4CHEGXY0v+05D/cvQdTnoEOXaMJgoTP0U2gZX9esznRuoFHsYZ1EmnnP5D2tjy+DW1WXl4vQznzIhawjj8VGeSW4OcKrA9Ozjz/I6Dtk1wUJHsiET8isPHV/+zQZVzh9i9Bzs7RD7YxNmDltpldb3d1/OT/R9hh7TvIpj5NeNv+/0NpsJC1CF5O7fR+RWuxVVREk1Mo2RSr78UQ9T1uamRC5/0LhI4SJnt1tS72aKt8HK9rE6FhmEO76ZWem+4fQrJviUcvKqs5osC8tNsV+Xq2IpBXb5i+kFyve5TlYJgTyPNhCZ/Sy2C7xa8IS31zt3IKbDxQFWTmuHQoFOaHo/W+JPlWulDtXC6JlFiLZ2/apWr7bdO9HNayhH4xeFp1hed8rzytdc51njVdVA1AuQNI3yC6a4GmPANwcc6dkbM4=
+  file_glob: true
   file: release/*
+  overwrite: true
+  skip_cleanup: true
   on:
-    repo: CDEBase/cli-tool
+    tags: true
