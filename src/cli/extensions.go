@@ -10,9 +10,9 @@ import (
 )
 
 type Extension struct {
-	dir string
-	entry string
-	bundle string
+	dir      string
+	entry    string
+	bundle   string
 	manifest *Manifest
 }
 
@@ -20,9 +20,9 @@ func (e *Extension) GetManifest() (*Manifest, error) {
 	manifest, err := readManifest(e.entry)
 
 	if err != nil {
-		log.Fatal("Cannot read extension manifest. Check directory and files!");
+		log.Fatal("Cannot read extension manifest. Check directory and files!")
 	}
-	return manifest, nil;
+	return manifest, nil
 }
 
 func (e *Extension) PrepareManifest() {
@@ -31,36 +31,36 @@ func (e *Extension) PrepareManifest() {
 	}
 
 	// Add files to manifest
-	e.manifest.ReadArtifacts(e.dir);
+	e.manifest.ReadArtifacts(e.dir)
 
 	// Prepare files - run build script
-	e.manifest.Prepublish(e.dir);
+	e.manifest.Prepublish(e.dir)
 }
 
 func NewExtension(dir string, entry string) (*Extension, error) {
 	extension := Extension{
-		dir: dir,
+		dir:   dir,
 		entry: entry,
 	}
 
-	manifest, err := extension.GetManifest();
+	manifest, err := extension.GetManifest()
 	if err != nil {
-		return nil, err;
+		return nil, err
 	}
 
-	extension.manifest = manifest;
-	extension.PrepareManifest();
+	extension.manifest = manifest
+	extension.PrepareManifest()
 
-	bundle, _ := extension.manifest.ReadBundle();
-	extension.bundle = bundle;
+	bundle, _ := extension.manifest.ReadBundle()
+	extension.bundle = bundle
 
-	return &extension, nil;
+	return &extension, nil
 }
 
 func init() {
 	commands = append(commands, cli.Command{
-		Name: "extension",
-		Aliases: []string{"e"},
+		Name:        "extension",
+		Aliases:     []string{"e"},
 		Description: "Extensions management",
 		Subcommands: []cli.Command{
 			{
@@ -73,21 +73,21 @@ func init() {
 					config, _ := loadConfig(flags.ConfigPath, &flags)
 					client := graphql.NewClient(config.Endpoint, nil)
 
-					extension, err := NewExtension(filepath.Dir(flags.Manifest), flags.Manifest);
+					extension, err := NewExtension(filepath.Dir(flags.Manifest), flags.Manifest)
 					if err != nil {
 						log.Fatal(err)
 					}
 
 					query, variables := NewPublishExtensionMutation(PublishExtensionVariables{
-						bundle: extension.bundle,
-						manifest: extension.manifest.String(),
+						bundle:      extension.bundle,
+						manifest:    extension.manifest.String(),
 						extensionID: extension.manifest.ExtensionID,
-					});
+					})
 
-					err = client.Query(context.Background(), &query, variables)
+					err = client.Mutate(context.Background(), &query, variables)
 
 					if err != nil {
-						log.Fatal(err);
+						log.Fatal(err)
 					}
 
 					return nil
