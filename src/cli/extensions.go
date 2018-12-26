@@ -78,19 +78,21 @@ func init() {
 						log.Fatal(err)
 					}
 
-					query, variables := NewPublishExtensionMutation(PublishExtensionVariables{
+					mutation, variables := NewPublishExtensionMutation(PublishExtensionVariables{
 						bundle:      extension.bundle,
 						manifest:    extension.manifest.String(),
 						extensionID: extension.manifest.ExtensionID,
 					})
 
-					err = client.Mutate(context.Background(), &query, variables)
+					err = client.Mutate(context.Background(), &mutation, variables)
 
 					if err != nil {
 						log.Fatal(err)
+					} else {
+						fmt.Printf("Extension %s has been published! \n", extension.manifest.ExtensionID)
 					}
 
-					return nil
+					return err
 				},
 			},
 		},

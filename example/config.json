@@ -1,4 +1,4 @@
 {
   "access_token": "Test AccessToken",
-  "endpoint": "http://localhost:8085/.api/graphql"
+  "endpoint": "http://localhost:8085/graphql"
 }

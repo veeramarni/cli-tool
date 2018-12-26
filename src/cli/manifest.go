@@ -25,24 +25,24 @@ func readManifest(manifestFlag string) (*Manifest, error) {
 }
 
 type Manifest struct {
-	Name string `json:"name"`
-	Main string `json:"main"`
-	Readme string `json:"readme"`
-	Version string `json:"version"`
-	Publisher string `json:"publisher"`
+	Name        string `json:"name"`
+	Main        string `json:"main"`
+	Readme      string `json:"readme"`
+	Version     string `json:"version"`
+	Publisher   string `json:"publisher"`
 	ExtensionID string `json:"extensionID"`
-	Scripts struct {
+	Scripts     struct {
 		Prepublish string `json:"cdebase:prepublish"`
 	} `json:"scripts"`
 }
 
 func (m *Manifest) String() string {
-	var str string;
+	var str string
 
-	data, _ := json.Marshal(m);
-	str = string(data);
+	data, _ := json.Marshal(m)
+	str = string(data)
 
-	return str;
+	return str
 }
 
 func (m *Manifest) readFile(fileName string) ([]byte, error) {
@@ -95,7 +95,7 @@ func (m *Manifest) ReadArtifacts(dir string) error {
 		return fmt.Errorf(`extension manifest must contain a "publisher" string property referring to a username or organization name on Sourcegraph (the extension ID will be %q)`, "publisher/"+m.Name)
 	}
 
-	m.ExtensionID = fmt.Sprintf("%s/%s", m.Publisher, m.Name)
+	//m.ExtensionID = fmt.Sprintf("%s/%s", m.Publisher, m.Name)
 
 	return nil
 }
