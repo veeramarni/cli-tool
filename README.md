@@ -19,14 +19,14 @@ If there is something you'd like to see Cdecode be able to do from the CLI, let 
 ### Mac OS:
 
 ```bash
-curl -L https://github.com/cdecode/src-cli/releases/download/latest/src_darwin_amd64 -o /usr/local/bin/src
+curl -L https://github.com/cdecode/cli-tool/releases/download/latest/src_darwin_amd64 -o /usr/local/bin/src
 chmod +x /usr/local/bin/src
 ```
 
 ### Linux:
 
 ```bash
-curl -L https://github.com/cdecode/src-cli/releases/download/latest/src_linux_amd64 -o /usr/local/bin/src
+curl -L https://github.com/cdecode/cli-tool/releases/download/latest/src_linux_amd64 -o /usr/local/bin/src
 chmod +x /usr/local/bin/src
 ```
 
@@ -38,14 +38,14 @@ Run in PowerShell as administrator:
 
 ```powershell
 New-Item -ItemType Directory 'C:\Program Files\Cdecode'
-Invoke-WebRequest https://github.com/cdecode/src-cli/releases/download/latest/src_windows_amd64.exe -OutFile 'C:\Program Files\Cdecode\src.exe'
+Invoke-WebRequest https://github.com/cdecode/cli-tool/releases/download/latest/src_windows_amd64.exe -OutFile 'C:\Program Files\Cdecode\src.exe'
 [Environment]::SetEnvironmentVariable('Path', [Environment]::GetEnvironmentVariable('Path', [EnvironmentVariableTarget]::Machine) + ';C:\Program Files\Cdecode', [EnvironmentVariableTarget]::Machine)
 $env:Path += ';C:\Program Files\Cdecode'
 ```
 
 Or manually:
 
-- [Download the latest src_windows_amd64.exe](https://github.com/cdecode/src-cli/releases/download/latest/src_windows_amd64.exe) and rename to `src.exe`.
+- [Download the latest src_windows_amd64.exe](https://github.com/cdecode/cli-tool/releases/download/latest/src_windows_amd64.exe) and rename to `src.exe`.
 - Place the file under e.g. `C:\Program Files\Cdecode\src.exe`
 - Add that directory to your system path to access it from any command prompt
 
