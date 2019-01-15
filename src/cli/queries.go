@@ -8,6 +8,8 @@ type PublishExtensionVariables struct {
 	bundle      string
 	extensionID string
 	manifest    string
+	name        string
+	version     string
 	sourceMap   string
 }
 
@@ -18,14 +20,16 @@ type PublishExtensionMutation struct {
 			Url  graphql.String
 			Name graphql.String
 		}
-	} `graphql:"publishExtension(force: $force, bundle: $bundle, manifest: $manifest, sourceMap: $sourceMap, extensionID: $extensionID)"`
+	} `graphql:"publishExtension(force: $force, bundle: $bundle, name: $name, version: $version, manifest: $manifest, sourceMap: $sourceMap, extensionID: $extensionID)"`
 }
 
 func NewPublishExtensionMutation(vars PublishExtensionVariables) (PublishExtensionMutation, map[string]interface{}) {
 	m := PublishExtensionMutation{}
 	variables := map[string]interface{}{
-		"force":       graphql.Boolean(vars.force),
+		"name":        graphql.String(vars.name),
 		"bundle":      graphql.String(vars.bundle),
+		"force":       graphql.Boolean(vars.force),
+		"version":     graphql.String(vars.version),
 		"manifest":    graphql.String(vars.manifest),
 		"sourceMap":   graphql.String(vars.sourceMap),
 		"extensionID": graphql.String(vars.extensionID),

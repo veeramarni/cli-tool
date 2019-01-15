@@ -58,6 +58,7 @@ func NewExtension(dir string, entry string) (*Extension, error) {
 }
 
 func init() {
+	fmt.Println(">>>")
 	commands = append(commands, cli.Command{
 		Name:        "extension",
 		Aliases:     []string{"e"},
@@ -79,11 +80,15 @@ func init() {
 					}
 
 					mutation, variables := NewPublishExtensionMutation(PublishExtensionVariables{
+						force:       true,
 						bundle:      extension.bundle,
+						name:        extension.manifest.Name,
+						version:     extension.manifest.Version,
 						manifest:    extension.manifest.String(),
 						extensionID: extension.manifest.ExtensionID,
 					})
 
+					// TODO: Add log file.
 					err = client.Mutate(context.Background(), &mutation, variables)
 
 					if err != nil {
