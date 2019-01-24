@@ -25,13 +25,14 @@ func readManifest(manifestFlag string) (*Manifest, error) {
 }
 
 type Manifest struct {
-	Name        string `json:"name"`
-	Main        string `json:"main"`
-	Readme      string `json:"readme"`
-	Version     string `json:"version"`
-	Publisher   string `json:"publisher"`
-	ExtensionID string `json:"extensionID"`
-	Scripts     struct {
+	Name             string   `json:"name"`
+	Main             string   `json:"main"`
+	Readme           string   `json:"readme"`
+	Version          string   `json:"version"`
+	Publisher        string   `json:"publisher"`
+	ExtensionID      string   `json:"extensionID"`
+	ActivationEvents []string `json:"activationEvents"`
+	Scripts          struct {
 		Prepublish string `json:"cdebase:prepublish"`
 	} `json:"scripts"`
 }
