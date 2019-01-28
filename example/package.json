@@ -1,8 +1,9 @@
 {
   "version": "0.0.3",
   "main": "main.js",
-  "name": "test-extension",
+  "name": "cli-tool",
   "publisher": "test-publisher",
+  "description": "Example description",
   "activationEvents": [
     "onLanguage:go"
   ],

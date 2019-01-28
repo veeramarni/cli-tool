@@ -30,6 +30,7 @@ type Manifest struct {
 	Readme           string   `json:"readme"`
 	Version          string   `json:"version"`
 	Publisher        string   `json:"publisher"`
+	Description      string   `json:"description"`
 	ExtensionID      string   `json:"extensionID"`
 	ActivationEvents []string `json:"activationEvents"`
 	Scripts          struct {
