@@ -96,7 +96,9 @@ func (m *Manifest) ReadArtifacts(dir string) error {
 		return fmt.Errorf(`extension manifest must contain a "publisher" string property referring to a username or organization name on Sourcegraph (the extension ID will be %q)`, "publisher/"+m.Name)
 	}
 
-	//m.ExtensionID = fmt.Sprintf("%s/%s", m.Publisher, m.Name)
+	m.ExtensionID = fmt.Sprintf("%s/%s", m.Publisher, m.Name)
+
+	fmt.Printf("ExtensionID: %s\n", m.ExtensionID)
 
 	return nil
 }

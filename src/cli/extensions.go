@@ -58,7 +58,6 @@ func NewExtension(dir string, entry string) (*Extension, error) {
 }
 
 func init() {
-	fmt.Println(">>>")
 	commands = append(commands, cli.Command{
 		Name:        "extension",
 		Aliases:     []string{"e"},

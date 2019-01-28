@@ -3,7 +3,6 @@
   "main": "main.js",
   "name": "test-extension",
   "publisher": "test-publisher",
-  "extensionID": "OZSPD1iC1A2tOjW",
   "activationEvents": [
     "onLanguage:go"
   ],
