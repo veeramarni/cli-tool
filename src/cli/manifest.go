@@ -29,6 +29,7 @@ type Manifest struct {
 	Main             string   `json:"main"`
 	Readme           string   `json:"readme"`
 	Version          string   `json:"version"`
+	Changelog        string   `json:"changelog"`
 	Publisher        string   `json:"publisher"`
 	Description      string   `json:"description"`
 	ExtensionID      string   `json:"extensionID"`
@@ -84,6 +85,9 @@ func (m *Manifest) ReadBundle() (string, error) {
 
 func (m *Manifest) ReadArtifacts(dir string) error {
 	m.Readme = m.GetReadme(dir)
+	m.Changelog = m.GetChangelog(dir)
+
+	fmt.Println(m.Changelog)
 
 	if m.Name == "" && m.Publisher == "" {
 		return errors.New(`extension manifest must contain "name" and "publisher" string properties (the extension ID is of the form "publisher/name" and uses these values)`)
@@ -107,6 +111,21 @@ func (m *Manifest) ReadArtifacts(dir string) error {
 func (m *Manifest) GetReadme(dir string) string {
 	var readme string
 	filenames := []string{"readme.md", "README.txt", "README", "readme.md", "readme.txt", "readme", "Readme.md", "Readme.txt", "Readme"}
+	for _, f := range filenames {
+		data, err := ioutil.ReadFile(filepath.Join(dir, f))
+		if err != nil {
+			continue
+		}
+		readme = string(data)
+		break
+	}
+
+	return readme
+}
+
+func (m *Manifest) GetChangelog(dir string) string {
+	var readme string
+	filenames := []string{"changelog.md", "CHANGELOG.txt", "CHANGELOG", "changelog.txt", "changelog", "Changelog.md", "Changelog.txt", "Changelog"}
 	for _, f := range filenames {
 		data, err := ioutil.ReadFile(filepath.Join(dir, f))
 		if err != nil {
