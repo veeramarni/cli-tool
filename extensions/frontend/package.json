@@ -7,7 +7,11 @@
   "activationEvents": [
     "onLanguage:go"
   ],
+  "extension": {
+    "type": "extension.simple"
+  },
   "scripts":  {
-    "cdebase:prepublish": "echo 'Prepublish!'"
+    "echo": "echo 'NPM.Prepublish!'",
+    "cdebase:prepublish": "npm run echo"
   }
 }

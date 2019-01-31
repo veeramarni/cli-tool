@@ -10,13 +10,14 @@ import (
 )
 
 type Config struct {
+	Registry    string `json:"registry"`
 	Endpoint    string `json:"endpoint"`
 	AccessToken string `json:"access_token"`
 }
 
 func loadConfig(configPath string, flags *ApplicationFlags) (*Config, error) {
 	cfgPath := configPath
-	userSpecified := cfgPath!= ""
+	userSpecified := cfgPath != ""
 
 	if !userSpecified {
 		user, err := user.Current()
@@ -33,28 +34,26 @@ func loadConfig(configPath string, flags *ApplicationFlags) (*Config, error) {
 		return nil, err
 	}
 
-	var cfg Config
-
 	if err == nil {
-		if err := json.Unmarshal(data, &cfg); err != nil {
+		if err := json.Unmarshal(data, &config); err != nil {
 			return nil, err
 		}
 	}
 
 	// Apply config overrides.
 	if envToken := os.Getenv("SRC_ACCESS_TOKEN"); envToken != "" {
-		cfg.AccessToken = envToken
+		config.AccessToken = envToken
 	}
 
 	// Override endpoint from flags
 	if flags.Endpoint != "" {
-		cfg.Endpoint = strings.TrimSuffix(flags.Endpoint, "/")
+		config.Endpoint = strings.TrimSuffix(flags.Endpoint, "/")
 	}
 
 	// Override access_key from flags
 	if flags.AccessToken != "" {
-		cfg.AccessToken = flags.AccessToken
+		config.AccessToken = flags.AccessToken
 	}
 
-	return &cfg, nil
+	return config, nil
 }

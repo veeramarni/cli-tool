@@ -1,0 +1,19 @@
+{
+	"name": "complex-extension",
+	"version": "0.0.3",
+	"scripts":  {
+		"cdebase:pack": "lerna exec 'npm pack' --stream",
+		"publish": "lerna publish --canary --yes --registry=http://localhost:4873 --stream",
+		"cdebase:publish": "echo $REGISTRY"
+	},
+	"activationEvents": [
+		"onLanguage:js"
+	],
+	"bundles": {
+		"server": "@complex-extension/backend",
+		"client": "@complex-extension/frontend"
+	},
+	"devDependencies": {
+		"lerna": "^2.11.0"
+	}
+}

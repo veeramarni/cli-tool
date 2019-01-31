@@ -1,0 +1,11 @@
+{
+  "name": "backend",
+  "version": "0.1.0-alpha.d3bb9067",
+  "description": "Test backend extension",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "",
+  "license": "ISC"
+}

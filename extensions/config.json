@@ -1,4 +1,5 @@
 {
   "access_token": "Test AccessToken",
+  "registry": "http://localhost:4873",
   "endpoint": "http://localhost:8085/graphql"
 }

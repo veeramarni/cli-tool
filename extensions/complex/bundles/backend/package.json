@@ -1,0 +1,12 @@
+{
+  "version": "0.1.0-alpha.d3bb9067",
+  "name": "@complex-extension/backend",
+  "description": "Test backend extension",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "jest",
+    "build": "parcel build src/index.js"
+  },
+  "author": "",
+  "license": "ISC"
+}
