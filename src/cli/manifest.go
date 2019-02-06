@@ -30,9 +30,9 @@ func init() {
 	// Initialize extension assets map
 	EXTENSION_ASSETS[ASSET_MAP] = []string{".map"}
 	EXTENSION_ASSETS[ASSET_ICON] = []string{"icon.png", "icon.ico", "favicon.ico"}
-	EXTENSION_ASSETS[ASSET_LICENSE] = []string{"license.md", "LICENSE.txt", "LICENSE", "license.txt", "license", "License.md", "License.txt", "License"}
-	EXTENSION_ASSETS[ASSET_README] = []string{"readme.md", "README.txt", "README", "readme.md", "readme.txt", "readme", "Readme.md", "Readme.txt", "Readme"}
-	EXTENSION_ASSETS[ASSET_CHANGELOG] = []string{"changelog.md", "CHANGELOG.txt", "CHANGELOG", "changelog.txt", "changelog", "Changelog.md", "Changelog.txt", "Changelog"}
+	EXTENSION_ASSETS[ASSET_LICENSE] = []string{"LICENSE.md", "license.md", "LICENSE.txt", "LICENSE", "license.txt", "license", "License.md", "License.txt", "License"}
+	EXTENSION_ASSETS[ASSET_README] = []string{"README.md", "readme.md", "README.txt", "README", "readme.md", "readme.txt", "readme", "Readme.md", "Readme.txt", "Readme"}
+	EXTENSION_ASSETS[ASSET_CHANGELOG] = []string{"CHANGELOG.md", "changelog.md", "CHANGELOG.txt", "CHANGELOG", "changelog.txt", "changelog", "Changelog.md", "Changelog.txt", "Changelog"}
 }
 
 func ReadManifest(context *ExtensionContext) (*Manifest, ExtensionLifecycle, error) {
@@ -135,7 +135,7 @@ func (m *Manifest) ReadAssets(dir string) error {
 		if content != "" {
 			assets = append(assets, ExtensionAsset{
 				Type:    asset,
-				Content: findFile(dir, files),
+				Content: content,
 			})
 		}
 	}

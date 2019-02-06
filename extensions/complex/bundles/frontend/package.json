@@ -1,6 +1,6 @@
 {
-  "name": "backend",
-  "version": "0.1.0-alpha.d3bb9067",
+  "name": "@complex-extension/frontend  ",
+  "version": "0.0.1",
   "description": "Test backend extension",
   "main": "dist/index.js",
   "scripts": {

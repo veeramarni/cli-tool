@@ -1,5 +1,5 @@
 {
-  "version": "0.1.0-alpha.d3bb9067",
+  "version": "0.0.1",
   "name": "@complex-extension/backend",
   "description": "Test backend extension",
   "main": "dist/index.js",
