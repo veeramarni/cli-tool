@@ -1,7 +1,7 @@
 {
-  "name": "@complex-extension/frontend  ",
+  "name": "@complex-extension/frontend",
   "version": "0.0.1",
-  "description": "Test backend extension",
+  "description": "Test frontend extension",
   "main": "dist/index.js",
   "scripts": {
     "test": "jest"
