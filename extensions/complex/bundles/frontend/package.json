@@ -1,0 +1,11 @@
+{
+  "name": "@complex-extension/frontend  ",
+  "version": "0.0.1",
+  "description": "Test backend extension",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "",
+  "license": "ISC"
+}

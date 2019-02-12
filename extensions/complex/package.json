@@ -1,0 +1,25 @@
+{
+	"name": "complex-extension",
+	"version": "0.0.1",
+	"description": "Awesome complex extension",
+	"publisher": "test-publisher",
+	"scripts": {
+		"cdebase:pack": "lerna exec 'npm pack' --stream",
+		"cdebase:publish": "lerna exec 'npm publish --yes --registry=http://localhost:4873' --stream",
+		"cdebase:unpublish": "lerna exec 'npm unpublish --yes --force --registry=http://localhost:4873' --stream"
+	},
+	"activationEvents": [
+		"onLanguage:js",
+		"onCommand:hello"
+	],
+	"extension": {
+		"type": "extension.complex"
+	},
+	"bundles": {
+		"server": "@complex-extension/backend",
+		"client": "@complex-extension/frontend"
+	},
+	"devDependencies": {
+		"lerna": "^2.11.0"
+	}
+}

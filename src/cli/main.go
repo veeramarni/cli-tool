@@ -1,4 +1,4 @@
-package main;
+package main
 
 import (
 	"github.com/urfave/cli"
@@ -7,16 +7,18 @@ import (
 )
 
 type ApplicationFlags struct {
-	Manifest string
-	Endpoint string
-	ConfigPath string
+	Dir         string
+	Manifest    string
+	Registry    string
+	Endpoint    string
+	ConfigPath  string
 	AccessToken string
 }
 
 var (
-	config *Config
+	config   *Config
 	commands []cli.Command
-	flags = ApplicationFlags{}
+	flags    = ApplicationFlags{}
 )
 
 func main() {
@@ -36,27 +38,36 @@ func main() {
 		log.Fatal(err)
 	}
 
-
-	app.Flags = []cli.Flag {
+	app.Flags = []cli.Flag{
 		cli.StringFlag{
-			Name: "config",
-			Usage: "Path to config file",
+			Name:        "config",
+			Usage:       "Path to config file",
 			Destination: &flags.ConfigPath,
 		},
 		cli.StringFlag{
-			Name: "access_token",
+			Name:        "registry",
+			Usage:       "NPM Registry URL",
+			Destination: &flags.Registry,
+		},
+		cli.StringFlag{
+			Name:        "access_token",
 			Destination: &flags.AccessToken,
-			Usage: "Access Token for CDEBase Account",
+			Usage:       "Access Token for CDEBase Account",
 		},
 		cli.StringFlag{
-			Name: "endpoint",
+			Name:        "endpoint",
 			Destination: &flags.ConfigPath,
-			Usage: "URL to CDEBase graphql server",
+			Usage:       "URL to CDEBase graphql server",
 		},
 		cli.StringFlag{
-			Name: "manifest",
+			Name:        "manifest",
 			Destination: &flags.Manifest,
-			Usage: "Manifest Filepath",
+			Usage:       "Manifest Filepath",
+		},
+		cli.StringFlag{
+			Name:        "dir",
+			Destination: &flags.Dir,
+			Usage:       "Extension directory",
 		},
 	}
 

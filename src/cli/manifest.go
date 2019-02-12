@@ -5,38 +5,100 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"os"
-	"os/exec"
+	"log"
 	"path/filepath"
 )
 
-func readManifest(manifestFlag string) (*Manifest, error) {
+const (
+	ASSET_MAP       = "asset.map"
+	ASSET_ICON      = "asset.icon"
+	ASSET_README    = "asset.readme"
+	ASSET_LICENSE   = "asset.license"
+	ASSET_CHANGELOG = "asset.changelog"
+
+	TYPE_SERVER  = "extension.server"
+	TYPE_SIMPLE  = "extension.simple"
+	TYPE_BROWSER = "extension.browser"
+	TYPE_COMPLEX = "extension.complex"
+)
+
+var (
+	EXTENSION_ASSETS = make(map[string][]string)
+)
+
+func init() {
+	// Initialize extension assets map
+	EXTENSION_ASSETS[ASSET_MAP] = []string{".map"}
+	EXTENSION_ASSETS[ASSET_ICON] = []string{"icon.png", "icon.ico", "favicon.ico"}
+	EXTENSION_ASSETS[ASSET_LICENSE] = []string{"LICENSE.md", "license.md", "LICENSE.txt", "LICENSE", "license.txt", "license", "License.md", "License.txt", "License"}
+	EXTENSION_ASSETS[ASSET_README] = []string{"README.md", "readme.md", "README.txt", "README", "readme.md", "readme.txt", "readme", "Readme.md", "Readme.txt", "Readme"}
+	EXTENSION_ASSETS[ASSET_CHANGELOG] = []string{"CHANGELOG.md", "changelog.md", "CHANGELOG.txt", "CHANGELOG", "changelog.txt", "changelog", "Changelog.md", "Changelog.txt", "Changelog"}
+}
+
+func ReadManifest(context *ExtensionContext) (*Manifest, ExtensionLifecycle, error) {
 	manifest := Manifest{}
-	data, err := ioutil.ReadFile(manifestFlag)
+	var strategy ExtensionLifecycle
+
+	data, err := ioutil.ReadFile(filepath.Join(context.Dir, context.ManifestFile))
 	if err != nil {
-		return nil, fmt.Errorf("%s\n\nRun this command in a directory with a %s file for an extension.\n\n", err, manifestFlag)
+		return nil, nil, fmt.Errorf("%s\n\nRun this command in a directory with a %s file for an extension.\n\n", err, context.ManifestFile)
 	}
 
 	if err = json.Unmarshal(data, &manifest); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return &manifest, nil
+	if manifest.Extension.ExtensionType == TYPE_SIMPLE {
+		strategy = RAWExtension{
+			AbstractExtension{
+				Context:  context,
+				Manifest: &manifest,
+			},
+		}
+	} else {
+		strategy = NPMExtension{
+			AbstractExtension{
+				Context:  context,
+				Manifest: &manifest,
+			},
+		}
+	}
+
+	return &manifest, strategy, nil
 }
 
-type Manifest struct {
+type NpmPackage struct {
 	Name             string   `json:"name"`
 	Main             string   `json:"main"`
-	Readme           string   `json:"readme"`
+	Type             string   `json:"type"`
 	Version          string   `json:"version"`
-	Changelog        string   `json:"changelog"`
 	Publisher        string   `json:"publisher"`
 	Description      string   `json:"description"`
 	ExtensionID      string   `json:"extensionID"`
 	ActivationEvents []string `json:"activationEvents"`
-	Scripts          struct {
-		Prepublish string `json:"cdebase:prepublish"`
+	Extension        struct {
+		ExtensionType string `json:"type"`
+	} `json:"extension"`
+	Bundles struct {
+		Server  string `json:"server"`
+		Browser string `json:"browser"`
+	} `json:"bundles"`
+	Scripts struct {
+		Build   string `json:"cdebase:build"`
+		Publish string `json:"cdebase:publish"`
 	} `json:"scripts"`
+}
+
+type ExtensionAsset struct {
+	Type    string
+	Content string
+}
+
+type Manifest struct {
+	NpmPackage
+
+	Bundle string           `json:"bundle"`
+	Assets []ExtensionAsset `json:"assets"`
 }
 
 func (m *Manifest) String() string {
@@ -48,92 +110,57 @@ func (m *Manifest) String() string {
 	return str
 }
 
-func (m *Manifest) readFile(fileName string) ([]byte, error) {
-	return ioutil.ReadFile(fileName)
-}
-
-func (m *Manifest) Prepublish(dir string) error {
-	if m.Scripts.Prepublish == "" {
+func (m *Manifest) ReadBundle(dir string) error {
+	if m.Extension.ExtensionType != TYPE_SIMPLE {
 		return nil
 	}
 
-	cmd := exec.Command("bash", "-c", m.Scripts.Prepublish)
-	cmd.Env = append(os.Environ(), fmt.Sprintf("PATH=%s:%s", filepath.Join(dir, "node_modules", ".bin"), os.Getenv("PATH")))
-	cmd.Dir = dir
-	cmd.Stdout = os.Stderr
-	cmd.Stderr = os.Stderr
+	bundle, err := readFile(dir, m.Main)
 
-	fmt.Fprintf(os.Stderr, "# cdebase:prepublish: %s\n", m.Scripts.Prepublish)
-
-	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("cdebase:prepublish script failed: %s (see output above)", err)
+	if err != nil {
+		log.Fatal(err)
+		return err
 	}
 
-	fmt.Fprintln(os.Stderr)
+	m.Bundle = string(bundle)
 	return nil
 }
 
-func (m *Manifest) ReadBundle() (string, error) {
-	bundle, err := m.readFile(m.Main)
+func (m *Manifest) ReadAssets(dir string) error {
+	assets := []ExtensionAsset{}
+	m.ExtensionID = fmt.Sprintf("%s/%s", m.Publisher, m.Name)
 
-	if err != nil {
-		return "", err
+	for asset, files := range EXTENSION_ASSETS {
+		content := findFile(dir, files)
+		if content != "" {
+			assets = append(assets, ExtensionAsset{
+				Type:    asset,
+				Content: content,
+			})
+		}
 	}
 
-	return string(bundle), nil
+	m.Assets = assets
+
+	return nil
 }
 
-func (m *Manifest) ReadArtifacts(dir string) error {
-	m.Readme = m.GetReadme(dir)
-	m.Changelog = m.GetChangelog(dir)
-
-	fmt.Println(m.Changelog)
-
+func (m *Manifest) Validate() (bool, error) {
 	if m.Name == "" && m.Publisher == "" {
-		return errors.New(`extension manifest must contain "name" and "publisher" string properties (the extension ID is of the form "publisher/name" and uses these values)`)
+		return false, errors.New(`extension manifest must contain "name" and "publisher" string properties (the extension ID is of the form "publisher/name" and uses these values)`)
 	}
 
 	if m.Name == "" {
-		return fmt.Errorf(`extension manifest must contain a "name" string property for the extension name (the extension ID will be %q)`, m.Publisher+"/name")
+		return false, fmt.Errorf(`extension manifest must contain a "name" string property for the extension name (the extension ID will be %q)`, m.Publisher+"/name")
 	}
 
 	if m.Publisher == "" {
-		return fmt.Errorf(`extension manifest must contain a "publisher" string property referring to a username or organization name on Sourcegraph (the extension ID will be %q)`, "publisher/"+m.Name)
+		return false, fmt.Errorf(`extension manifest must contain a "publisher" string property referring to a username or organization name on Sourcegraph (the extension ID will be %q)`, "publisher/"+m.Name)
 	}
 
-	m.ExtensionID = fmt.Sprintf("%s/%s", m.Publisher, m.Name)
-
-	fmt.Printf("ExtensionID: %s\n", m.ExtensionID)
-
-	return nil
-}
-
-func (m *Manifest) GetReadme(dir string) string {
-	var readme string
-	filenames := []string{"readme.md", "README.txt", "README", "readme.md", "readme.txt", "readme", "Readme.md", "Readme.txt", "Readme"}
-	for _, f := range filenames {
-		data, err := ioutil.ReadFile(filepath.Join(dir, f))
-		if err != nil {
-			continue
-		}
-		readme = string(data)
-		break
+	if m.ExtensionID == "" {
+		return false, fmt.Errorf(`extension manifest must contain a "extensionId" (the extension ID will be %q)`, "publisher/"+m.ExtensionID)
 	}
 
-	return readme
-}
-
-func (m *Manifest) GetChangelog(dir string) string {
-	var readme string
-	filenames := []string{"changelog.md", "CHANGELOG.txt", "CHANGELOG", "changelog.txt", "changelog", "Changelog.md", "Changelog.txt", "Changelog"}
-	for _, f := range filenames {
-		data, err := ioutil.ReadFile(filepath.Join(dir, f))
-		if err != nil {
-			continue
-		}
-		readme = string(data)
-		break
-	}
-
-	return readme
+	return true, nil
 }
